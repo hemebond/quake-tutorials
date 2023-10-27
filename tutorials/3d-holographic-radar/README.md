@@ -104,19 +104,6 @@ So, make sure *misc.qc* is saved, close it and open up *client.qc*. Go to `PutCl
 Then go to the end of `PutClientInServer`, and add this near the end of the function:
 
 ```diff
-diff --git a/./src/client.qc b/./tutorials/3d-holographic-radar/src/client.qc
-index 080d2e5..488b365 100644
---- a/./src/client.qc
-+++ b/./tutorials/3d-holographic-radar/src/client.qc
-@@ -460,6 +460,7 @@ called each time a player is spawned
- */
- void() DecodeLevelParms;
- void() PlayerDie;
-+void() func_radar;
- 
- 
- void() PutClientInServer =
-@@ -520,6 +521,15 @@ void() PutClientInServer =
  		spawn_tfog(self.origin + v_forward*20);
  	}
  
