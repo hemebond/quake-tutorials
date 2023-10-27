@@ -1,0 +1,4 @@
+* text=auto
+*.qc text diff=cpp
+
+*.mdl binary
