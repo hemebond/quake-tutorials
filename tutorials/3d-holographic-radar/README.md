@@ -101,14 +101,22 @@ So, make sure *misc.qc* is saved, close it and open up *client.qc*. Go to `PutCl
 +void() func_radar;
 ```
 
-Then go to the end of `PutClientInServer`, and just before
-
-```c
-spawn_tdeath (self.origin, self);
-```
-add
+Then go to the end of `PutClientInServer`, and add this near the end of the function:
 
 ```diff
+diff --git a/./src/client.qc b/./tutorials/3d-holographic-radar/src/client.qc
+index 080d2e5..488b365 100644
+--- a/./src/client.qc
++++ b/./tutorials/3d-holographic-radar/src/client.qc
+@@ -460,6 +460,7 @@ called each time a player is spawned
+ */
+ void() DecodeLevelParms;
+ void() PlayerDie;
++void() func_radar;
+ 
+ 
+ void() PutClientInServer =
+@@ -520,6 +521,15 @@ void() PutClientInServer =
  		spawn_tfog(self.origin + v_forward*20);
  	}
  
@@ -122,6 +130,7 @@ add
 +	}
 +
  	spawn_tdeath(self.origin, self);
+ };
 ```
 
 This is just a quick hack, satisfactory to just to see the radar in a map. The first player to spawn in a map will create a `func_radar` next to them. Since this `func_radar` has no model, it will acquire the default size defined in `func_radar` (100x100x100). Add a few bots if your mod has them (Frikbots kick arse :) or indeed a few human opponents, and you should see dots other than your own moving around the display. Its difficult to see your own dot moving around, when you are yourself, moving around.
