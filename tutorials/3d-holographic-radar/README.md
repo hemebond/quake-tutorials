@@ -93,7 +93,9 @@ Now we come to the bit of the code with `.punchangle` in it. Before you get conf
 
 Thats all there is to it if you want to use `func_radar` in your own map. However, the chances are you want a way of adding it to your favourite existing map, for the purpose of testing the entity if nothing else.
 
-So, make sure *misc.qc* is saved, close it and open up *client.qc*. Go to `PutClientInServer`, and just before that function add:
+Save and close *misc.qc*.
+
+Open up *client.qc* and go to `PutClientInServer`, and just before that function add:
 
 ```diff
  void() DecodeLevelParms;
@@ -106,7 +108,8 @@ Then go to the end of `PutClientInServer`, and add this near the end of the func
 ```diff
  		spawn_tfog(self.origin + v_forward*20);
  	}
- 
+
++   // Spawn a func_radar on the first player to spawn
 +	if (!find(world, classname, "func_radar"))
 +	{
 +		entity radar = spawn();
