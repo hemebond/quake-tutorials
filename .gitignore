@@ -1,0 +1,14 @@
+# Tutorial QuakeC build directory
+build/
+
+# Binary map compilation output
+*.bsp
+*.wad
+*.prt
+*.pts
+*.log
+*.texinfo.json
+*-compile.map
+
+# TrenchBroom autosave dirs
+**/autosave/
