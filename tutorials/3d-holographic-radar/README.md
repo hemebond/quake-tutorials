@@ -87,16 +87,18 @@ void() func_radar =
 
 The normal way to set up a `func_radar` would be as a brush entity in a map. In this case, the `func_radar` function resets the brush model for the entity (you just have to do this otherwise it will not work) and then proceeds to calculate the origin for the brush model. I found out that brush models do not have a set origin position vector, not that I could access from QC code anyway. So it is neccessary to calculate the centre of the brush model, and set the origin to that.
 
-The .cnt field of the `func_radar` entity determines how often radar_think is called, and thus how often the display is updated. The process of scanning the map is pretty system intensive (ie: it could make slow computers chug like hell), especially when there are lots of players. So when you add a `func_radar` to your map think before you automatically set delay to `0.1`. I have made the default `1`, which should guarantee acceptable performance. A high `.delay` would look more like a traditional 'radar', only refreshing every few seconds or so, but may be pretty useless in a frenzied deathmatch.
+The `.delay` field of the `func_radar` entity determines how often `radar_think` is called, and thus how often the display is updated. The process of scanning the map is pretty system intensive (ie: it could make slow computers chug like hell), especially when there are lots of players. So when you add a `func_radar` to your map think before you automatically set delay to `0.1`. I have made the default `1`, which should guarantee acceptable performance. A high `.delay` would look more like a traditional 'radar', only refreshing every few seconds or so, but may be pretty useless in a frenzied deathmatch.
 
-Now we come to the bit of the code with `punchangle` in it. Before you get confused, this has nothing to do with the `punchangle` you may have encountered with weapon recoil, I just recycled that vector to avoid having to define a new one. `punchangle` in a `func_radar` is the ratio between the world dimensions (8192 cubed) and the dimensions of our `func_radar`. In `radar_think`, it is used to calculate the positions of the 'blips' from those of the players. Because the size of a `func_radar` does not change, the size ratio is calculated once, here at the beginning.
+Now we come to the bit of the code with `.punchangle` in it. Before you get confused, this has nothing to do with the `.punchangle` you may have encountered with weapon recoil, I just recycled that vector to avoid having to define a new one. `.punchangle` in a `func_radar` is the ratio between the world dimensions (8192 cubed) and the dimensions of our `func_radar`. In `radar_think`, it is used to calculate the positions of the 'blips' from those of the players. Because the size of a `func_radar` does not change, the size ratio is calculated once, here at the beginning.
 
 Thats all there is to it if you want to use `func_radar` in your own map. However, the chances are you want a way of adding it to your favourite existing map, for the purpose of testing the entity if nothing else.
 
 So, make sure *misc.qc* is saved, close it and open up *client.qc*. Go to `PutClientInServer`, and just before that function add:
 
-```c
-void() func_radar;
+```diff
+ void() DecodeLevelParms;
+ void() PlayerDie;
++void() func_radar;
 ```
 
 Then go to the end of `PutClientInServer`, and just before
@@ -106,15 +108,20 @@ spawn_tdeath (self.origin, self);
 ```
 add
 
-```c
-	if (!find (world, classname, "func_radar"))
-	{
-		entity radar = spawn ();
-		radar.classname = "func_radar";
-		setorigin (radar, self.origin);
-		radar.think = func_radar;
-		radar.nextthink = time;
-	}
+```diff
+ 		spawn_tfog(self.origin + v_forward*20);
+ 	}
+ 
++	if (!find(world, classname, "func_radar"))
++	{
++		entity radar = spawn();
++		radar.classname = "func_radar";
++		setorigin(radar, self.origin);
++		radar.think = func_radar;
++		radar.nextthink = time;
++	}
++
+ 	spawn_tdeath(self.origin, self);
 ```
 
 This is just a quick hack, satisfactory to just to see the radar in a map. The first player to spawn in a map will create a `func_radar` next to them. Since this `func_radar` has no model, it will acquire the default size defined in `func_radar` (100x100x100). Add a few bots if your mod has them (Frikbots kick arse :) or indeed a few human opponents, and you should see dots other than your own moving around the display. Its difficult to see your own dot moving around, when you are yourself, moving around.
